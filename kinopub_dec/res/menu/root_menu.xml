@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:icon="@android:drawable/ic_media_play" android:id="@id/play_with" android:title="@string/utils_showwith" />
-    <item android:icon="@android:drawable/ic_media_play" android:id="@id/download" android:title="@string/download" />
-</menu>

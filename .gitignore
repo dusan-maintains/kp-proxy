@@ -1,0 +1,7 @@
+jre/
+kinopub_dec/
+*.apk
+apk_work/
+__pycache__/
+*.pyc
+kinopub_tokens.json
