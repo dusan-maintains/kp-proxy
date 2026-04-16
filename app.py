@@ -199,6 +199,22 @@ def fake_subscription(data):
     return data
 
 
+def force_subscribed(data):
+    """Ставит subscribed=true на ВСЕ items в ответе"""
+    if isinstance(data, dict):
+        if "subscribed" in data:
+            data["subscribed"] = True
+        if "item" in data and isinstance(data["item"], dict):
+            data["item"]["subscribed"] = True
+        for key in ["items", "episodes"]:
+            lst = data.get(key, [])
+            if isinstance(lst, list):
+                for item in lst:
+                    if isinstance(item, dict):
+                        item["subscribed"] = True
+    return data
+
+
 @app.route("/", defaults={"path": ""}, methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS"])
 @app.route("/<path:path>", methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS"])
 def proxy(path):
@@ -261,6 +277,10 @@ def proxy(path):
                 if "user" in data or "subscription" in data:
                     data = fake_subscription(data)
                     modified = True
+
+            # ВСЕ ответы — ставим subscribed=true
+            data = force_subscribed(data)
+            modified = True
 
             # items/ — подменяем URLs в файлах
             if "items" in path or "watching" in path:
