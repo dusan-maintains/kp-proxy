@@ -52,17 +52,19 @@ def forge_token_in_url(url):
     return url, False
 
 
-def replace_demo_with_real(url, real_path):
+def replace_demo_with_real(url, real_path, url_type="http"):
     """Заменяет demo путь на реальный путь файла"""
     if not real_path:
         return url
     real_path = real_path.lstrip("/")
-    # HTTP: /demo/demo.mp4 → /real/path.mp4
+    # HTTP: /pd/TOKEN/demo/demo.mp4 → /pd/TOKEN/real/path.mp4
     url = url.replace("/demo/demo.mp4", "/" + real_path)
-    # HLS: /demo/master-v1a1.m3u8 → /real/path.mp4/master-v1a1.m3u8
+    # HLS: /hls/TOKEN/demo/master-v1a1.m3u8 → /hls/TOKEN/real/path.mp4/master-v1a1.m3u8
     url = url.replace("/demo/master-v1a1.m3u8", "/" + real_path + "/master-v1a1.m3u8")
-    # HLS4/HLS2: /demo.m3u8 → /real/path.mp4.m3u8  
-    url = url.replace("/demo.m3u8", "/" + real_path + ".m3u8")
+    # HLS4/HLS2: CDN не поддерживает file path → конвертируем в HLS формат
+    if url_type in ("hls4", "hls2") and "/demo.m3u8" in url:
+        url = url.replace("/demo.m3u8", "/" + real_path + "/master-v1a1.m3u8")
+        url = url.replace("/hls4/", "/hls/").replace("/hls2/", "/hls/")
     return url
 
 
@@ -121,7 +123,7 @@ def process_files_in_response(data, auth_header):
             forged, ok = forge_token_in_url(url)
             if ok:
                 if real_path:
-                    forged = replace_demo_with_real(forged, real_path)
+                    forged = replace_demo_with_real(forged, real_path, url_type)
                 url_obj[url_type] = forged
                 modified = True
                 app.logger.info(f"Forged [{quality}] [{codec}] {url_type} real_path={bool(real_path)}")
