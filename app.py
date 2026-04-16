@@ -13,6 +13,22 @@ app = Flask(__name__)
 
 REAL_API = "https://api.service-kp.com"
 DEVICE_SETTINGS_CACHE = {}  # device_id → True if 4k enabled
+REQUEST_LOG = []  # in-memory log
+import logging
+logging.basicConfig(level=logging.INFO)
+
+
+@app.route("/kp4k/logs")
+def show_logs():
+    """Debug: показать последние запросы"""
+    lines = "\n".join(REQUEST_LOG[-100:])
+    return f"<pre>{lines}</pre>", 200
+
+
+@app.route("/kp4k/clear")
+def clear_logs():
+    REQUEST_LOG.clear()
+    return "cleared", 200
 
 def forge_token_in_url(url):
     """Подменяет -1 → 1 в base64 CDN-токене внутри URL"""
@@ -183,7 +199,9 @@ def proxy(path):
         real_path = real_path[5:]  # api2/ → v1.1/...
     target_url = f"{REAL_API}/{real_path}"
     auth_header = request.headers.get("Authorization", "")
-    app.logger.info(f">>> {request.method} /{path} from {request.remote_addr}")
+    t_start = time.time()
+    log_entry = f"{time.strftime('%H:%M:%S')} {request.method} /{path}"
+    app.logger.info(f">>> {log_entry}")
 
     # Включаем 4K только при запросе /user (один раз за сессию)
     if "/user" in path and auth_header and "Bearer" in auth_header:
@@ -236,7 +254,11 @@ def proxy(path):
                     app.logger.info(f"Forged URLs in /{path}")
 
             body = json.dumps(data, ensure_ascii=False)
-            app.logger.info(f"<<< /{path}: {resp.status_code} {'[MODIFIED]' if modified else ''}")
+            elapsed = f"{time.time()-t_start:.1f}s"
+            result = f"{log_entry} → {resp.status_code} {'[FORGED]' if modified else ''} {elapsed}"
+            REQUEST_LOG.append(result)
+            if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
+            app.logger.info(f"<<< {result}")
             return Response(body, status=resp.status_code,
                           content_type="application/json; charset=utf-8")
         except Exception as e:
