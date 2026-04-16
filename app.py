@@ -198,13 +198,13 @@ def proxy(path):
         if request.method == "GET":
             resp = rq.get(target_url, headers=headers, params=request.args, timeout=30)
         elif request.method == "POST":
-            resp = rq.post(target_url, headers=headers, data=request.get_data(), timeout=30)
+            resp = rq.post(target_url, headers=headers, params=request.args, data=request.get_data(), timeout=30)
         elif request.method == "PUT":
-            resp = rq.put(target_url, headers=headers, data=request.get_data(), timeout=30)
+            resp = rq.put(target_url, headers=headers, params=request.args, data=request.get_data(), timeout=30)
         elif request.method == "PATCH":
-            resp = rq.patch(target_url, headers=headers, data=request.get_data(), timeout=30)
+            resp = rq.patch(target_url, headers=headers, params=request.args, data=request.get_data(), timeout=30)
         elif request.method == "DELETE":
-            resp = rq.delete(target_url, headers=headers, timeout=30)
+            resp = rq.delete(target_url, headers=headers, params=request.args, timeout=30)
         else:
             return Response("OK", status=200)
     except Exception as e:
