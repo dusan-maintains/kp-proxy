@@ -43,10 +43,7 @@ def forge_token_in_url(url):
             new_decoded = decoded.replace(f"id={id_val}", f"id={new_id}")
             new_b64 = base64.b64encode(new_decoded.encode()).decode().rstrip("=")
             new_url = url.replace(token_b64, new_b64)
-            # Также убираем demo/demo.mp4 если есть
-            new_url = new_url.replace("/demo/demo.mp4", "")
-            new_url = new_url.replace("/demo/master-v1a1.m3u8", "")
-            new_url = new_url.replace("/demo.m3u8", "")
+            # НЕ трогаем demo путь тут — replace_demo_with_real сделает это позже
             app.logger.info(f"Forged token: ;-1; → ;1; in {match.group(1)} URL")
             return new_url, True
     except Exception as e:
@@ -56,11 +53,16 @@ def forge_token_in_url(url):
 
 
 def replace_demo_with_real(url, real_path):
-    """Заменяет demo/demo.mp4 на реальный путь файла"""
+    """Заменяет demo путь на реальный путь файла"""
     if not real_path:
         return url
     real_path = real_path.lstrip("/")
-    url = url.replace("demo/demo.mp4", real_path)
+    # HTTP: /demo/demo.mp4 → /real/path.mp4
+    url = url.replace("/demo/demo.mp4", "/" + real_path)
+    # HLS: /demo/master-v1a1.m3u8 → /real/path.mp4/master-v1a1.m3u8
+    url = url.replace("/demo/master-v1a1.m3u8", "/" + real_path + "/master-v1a1.m3u8")
+    # HLS4/HLS2: /demo.m3u8 → /real/path.mp4.m3u8  
+    url = url.replace("/demo.m3u8", "/" + real_path + ".m3u8")
     return url
 
 
