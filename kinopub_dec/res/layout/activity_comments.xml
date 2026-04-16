@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout android:theme="@style/AppTheme.AppBarOverlay" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar android:id="@id/toolbar" android:background="?colorPrimary" android:layout_width="fill_parent" android:layout_height="?actionBarSize" app:contentInsetStartWithNavigation="0.0dip" app:popupTheme="@style/AppTheme.PopupOverlay">
+            <TextView android:textAppearance="?android:textAppearanceMedium" android:ellipsize="end" android:gravity="start" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/activity_comments_title" android:maxLines="1" android:layout_weight="2.0" android:fontFamily="sans-serif-condensed" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:weightSum="1.0" app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+        <RelativeLayout android:gravity="center_horizontal" android:orientation="vertical" android:id="@id/layout" android:background="@color/colorTransparent" android:layout_width="fill_parent" android:layout_height="fill_parent" android:weightSum="1.0"
+          xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+            <ListView android:id="@id/listview" android:paddingTop="5.0dip" android:focusable="true" android:scrollbars="vertical" android:clickable="true" android:layout_width="fill_parent" android:layout_height="wrap_content" android:fastScrollEnabled="false" />
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

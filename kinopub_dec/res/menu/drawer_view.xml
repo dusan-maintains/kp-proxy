@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@id/grp1" android:checkableBehavior="single">
+        <item android:icon="@drawable/ic_eye" android:id="@id/nav_isee" android:title="@string/menu_nav_isee" />
+        <item android:icon="@drawable/ic_folder" android:id="@id/nav_bookmarks" android:title="ЗАКЛАДКИ" />
+        <item android:icon="@drawable/ic_history_thin" android:id="@id/nav_history" android:title="ИСТОРИЯ" />
+    </group>
+    <group android:id="@id/grp2" android:checkableBehavior="single">
+        <item android:icon="@drawable/ic_movies" android:id="@id/nav_movies" android:title="ФИЛЬМЫ" />
+        <item android:icon="@drawable/ic_series" android:id="@id/nav_serials" android:title="СЕРИАЛЫ" />
+        <item android:icon="@drawable/ic_cartoons2" android:id="@id/nav_cartoons" android:title="МУЛЬТФИЛЬМЫ" />
+        <item android:icon="@drawable/ic_hdr" android:id="@id/nav_4k" android:title="4K" />
+        <item android:icon="@drawable/ic_3d" android:id="@id/nav_3d" android:title="3D" />
+        <item android:icon="@drawable/ic_concert3" android:id="@id/nav_concert" android:title="КОНЦЕРТЫ" />
+        <item android:icon="@drawable/ic_documentary_movie" android:id="@id/nav_doc" android:title="ДОК.ФИЛЬМЫ" />
+        <item android:icon="@drawable/ic_documentary_series" android:id="@id/nav_doc_serials" android:title="ДОК.СЕРИАЛЫ" />
+        <item android:icon="@drawable/ic_television" android:id="@id/nav_shows" android:title="ТВ ШОУ" />
+    </group>
+    <group android:id="@id/grp3" android:checkableBehavior="single">
+        <item android:icon="@drawable/ic_collection" android:id="@id/nav_collections" android:title="ПОДБОРКИ" />
+        <item android:icon="@drawable/ic_iptv" android:id="@id/nav_tv" android:title="ТВ" />
+        <item android:icon="@drawable/ic_settings" android:id="@id/nav_settings" android:title="НАСТРОЙКИ" />
+    </group>
+    <group android:enabled="false" android:id="@id/grp4" android:checkableBehavior="none">
+        <item android:textColor="@color/color_menu" android:id="@id/nav_version" android:title="Версия 0.0.61" android:checkable="false" />
+    </group>
+</menu>

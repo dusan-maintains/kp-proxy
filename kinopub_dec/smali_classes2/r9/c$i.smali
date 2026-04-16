@@ -1,0 +1,197 @@
+.class public abstract Lr9/c$i;
+.super Lr9/c$g;
+.source "SourceFile"
+
+# interfaces
+.implements Lr9/i;
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lr9/c;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x409
+    name = "i"
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "<T:",
+        "Ljava/lang/Object;",
+        ">",
+        "Lr9/c$g<",
+        "TT;>;",
+        "Lr9/i<",
+        "TT;>;"
+    }
+.end annotation
+
+
+# direct methods
+.method public constructor <init>(Lr9/c;Ls9/e$b;)V
+    .locals 0
+
+    .line 1
+    if-eqz p1, :cond_0
+
+    .line 2
+    .line 3
+    invoke-direct {p0, p1, p2}, Lr9/c$g;-><init>(Lr9/c;Ls9/e$b;)V
+
+    .line 4
+    .line 5
+    .line 6
+    return-void
+
+    .line 7
+    :cond_0
+    const/4 p1, 0x0
+
+    .line 8
+    invoke-static {p1}, Lr9/c$i;->a(I)V
+
+    .line 9
+    .line 10
+    .line 11
+    const/4 p1, 0x0
+
+    .line 12
+    throw p1
+.end method
+
+.method public static synthetic a(I)V
+    .locals 7
+
+    const/4 v0, 0x2
+
+    if-eq p0, v0, :cond_0
+
+    const-string v1, "Argument for @NotNull parameter \'%s\' of %s.%s must not be null"
+
+    goto :goto_0
+
+    :cond_0
+    const-string v1, "@NotNull method %s.%s must not return null"
+
+    :goto_0
+    if-eq p0, v0, :cond_1
+
+    const/4 v2, 0x3
+
+    goto :goto_1
+
+    :cond_1
+    const/4 v2, 0x2
+
+    :goto_1
+    new-array v2, v2, [Ljava/lang/Object;
+
+    const-string v3, "kotlin/reflect/jvm/internal/impl/storage/LockBasedStorageManager$LockBasedNotNullLazyValueWithPostCompute"
+
+    const/4 v4, 0x0
+
+    const/4 v5, 0x1
+
+    if-eq p0, v5, :cond_3
+
+    if-eq p0, v0, :cond_2
+
+    const-string v6, "storageManager"
+
+    aput-object v6, v2, v4
+
+    goto :goto_2
+
+    :cond_2
+    aput-object v3, v2, v4
+
+    goto :goto_2
+
+    :cond_3
+    const-string v6, "computable"
+
+    aput-object v6, v2, v4
+
+    :goto_2
+    if-eq p0, v0, :cond_4
+
+    aput-object v3, v2, v5
+
+    goto :goto_3
+
+    :cond_4
+    const-string v3, "invoke"
+
+    aput-object v3, v2, v5
+
+    :goto_3
+    if-eq p0, v0, :cond_5
+
+    const-string v3, "<init>"
+
+    aput-object v3, v2, v0
+
+    :cond_5
+    invoke-static {v1, v2}, Ljava/lang/String;->format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+
+    move-result-object v1
+
+    if-eq p0, v0, :cond_6
+
+    new-instance p0, Ljava/lang/IllegalArgumentException;
+
+    invoke-direct {p0, v1}, Ljava/lang/IllegalArgumentException;-><init>(Ljava/lang/String;)V
+
+    goto :goto_4
+
+    :cond_6
+    new-instance p0, Ljava/lang/IllegalStateException;
+
+    invoke-direct {p0, v1}, Ljava/lang/IllegalStateException;-><init>(Ljava/lang/String;)V
+
+    :goto_4
+    throw p0
+.end method
+
+
+# virtual methods
+.method public final invoke()Ljava/lang/Object;
+    .locals 1
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()TT;"
+        }
+    .end annotation
+
+    .line 1
+    invoke-super {p0}, Lr9/c$g;->invoke()Ljava/lang/Object;
+
+    .line 2
+    .line 3
+    .line 4
+    move-result-object v0
+
+    .line 5
+    if-eqz v0, :cond_0
+
+    .line 6
+    .line 7
+    return-object v0
+
+    .line 8
+    :cond_0
+    const/4 v0, 0x2
+
+    .line 9
+    invoke-static {v0}, Lr9/c$i;->a(I)V
+
+    .line 10
+    .line 11
+    .line 12
+    const/4 v0, 0x0
+
+    .line 13
+    throw v0
+.end method

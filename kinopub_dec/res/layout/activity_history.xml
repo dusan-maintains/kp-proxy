@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:fitsSystemWindows="true" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout android:theme="@style/AppTheme.AppBarOverlay" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar android:id="@id/toolbar" android:background="?colorPrimary" android:layout_width="fill_parent" android:layout_height="?actionBarSize" app:contentInsetStartWithNavigation="0.0dip" app:popupTheme="@style/AppTheme.PopupOverlay">
+            <TextView android:textAppearance="?android:textAppearanceMedium" android:ellipsize="end" android:gravity="start" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ИСТОРИЯ ПРОСМОТРА" android:maxLines="1" android:fontFamily="sans-serif-condensed" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:weightSum="1.0" app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <RelativeLayout android:gravity="center_horizontal" android:orientation="vertical" android:id="@id/layout" android:background="@color/colorTransparent" android:layout_width="fill_parent" android:layout_height="fill_parent" android:weightSum="1.0">
+            <LinearLayout android:orientation="vertical" android:background="@color/background" android:layout_width="fill_parent" android:layout_height="fill_parent">
+                <com.facebook.shimmer.ShimmerFrameLayout android:id="@id/shimmer_view_container" android:background="@color/background" android:layout_width="fill_parent" android:layout_height="wrap_content" app:shimmer_repeat_mode="restart" app:shimmer_shape="radial">
+                    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                        <include layout="@layout/history_list_item_shimmer" />
+                        <include layout="@layout/history_list_item_shimmer" />
+                        <include layout="@layout/history_list_item_shimmer" />
+                        <include layout="@layout/history_list_item_shimmer" />
+                        <include layout="@layout/history_list_item_shimmer" />
+                        <include layout="@layout/history_list_item_shimmer" />
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+                <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:background="@color/background" android:focusable="true" android:focusableInTouchMode="false" android:clickable="true" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

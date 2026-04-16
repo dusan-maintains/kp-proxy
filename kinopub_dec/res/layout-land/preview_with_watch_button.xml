@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@id/info_container" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView android:layout_gravity="bottom" android:id="@id/preview" android:layout_width="fill_parent" android:layout_height="400.0dip" android:src="@drawable/placeholder" android:scaleType="centerCrop" android:adjustViewBounds="true" />
+    <ImageView android:layout_gravity="bottom|center" android:layout_width="fill_parent" android:layout_height="wrap_content" android:src="@drawable/gradient" android:scaleType="fitXY" />
+    <LinearLayout android:layout_gravity="top" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+        <RelativeLayout android:layout_gravity="top" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <ImageButton android:id="@id/back" android:background="@drawable/btn_shadow" android:padding="10.0dip" android:focusable="true" android:clickable="true" android:layout_width="45.0dip" android:layout_height="45.0dip" android:scaleType="fitXY" android:tint="@android:color/white" android:layout_alignParentLeft="true" android:color="@android:color/white" app:srcCompat="@drawable/ic_back" style="@android:style/Widget.ImageButton" />
+            <ImageButton android:id="@id/share" android:background="@drawable/btn_shadow" android:padding="10.0dip" android:focusable="true" android:clickable="true" android:layout_width="45.0dip" android:layout_height="45.0dip" android:scaleType="fitXY" android:tint="@android:color/white" android:layout_alignParentRight="true" android:color="@android:color/white" app:srcCompat="@drawable/ic_share_white_24dp" style="@android:style/Widget.ImageButton" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout android:gravity="center_horizontal" android:layout_gravity="bottom|center" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <Button android:textSize="14.0sp" android:textColor="@android:color/white" android:layout_gravity="bottom|center" android:id="@id/button_play" android:background="@drawable/ic_button_play_bg" android:paddingTop="8.0dip" android:paddingBottom="8.0dip" android:focusable="true" android:focusableInTouchMode="true" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/button_watch_movie" android:fontFamily="sans-serif-condensed" android:paddingStart="24.0dip" android:paddingEnd="24.0dip" />
+        <Space android:id="@id/space1" android:layout_width="15.0dip" android:layout_height="fill_parent" />
+        <Button android:textSize="14.0sp" android:textColor="@android:color/white" android:layout_gravity="bottom|center" android:id="@id/seasons" android:background="@drawable/ic_button_play_bg" android:paddingTop="8.0dip" android:paddingBottom="8.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/button_seasons" android:fontFamily="sans-serif-condensed" android:paddingStart="24.0dip" android:paddingEnd="23.0dip" />
+        <Space android:id="@id/space2" android:layout_width="15.0dip" android:layout_height="fill_parent" />
+        <Button android:textSize="14.0sp" android:textColor="@android:color/white" android:layout_gravity="bottom|center" android:id="@id/trailer" android:background="@drawable/ic_button_play_bg" android:paddingTop="8.0dip" android:paddingBottom="8.0dip" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/button_trailer" android:fontFamily="sans-serif-condensed" android:paddingStart="24.0dip" android:paddingEnd="23.0dip" android:elevation="5.0dip" />
+    </LinearLayout>
+</FrameLayout>

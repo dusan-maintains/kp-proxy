@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:background="@color/colorTransparent" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout android:theme="@style/AppTheme.AppBarOverlay" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar android:id="@id/toolbar" android:background="?colorPrimary" android:layout_width="fill_parent" android:layout_height="?actionBarSize" app:contentInsetStartWithNavigation="0.0dip" app:popupTheme="@style/AppTheme.PopupOverlay">
+            <TextView android:textAppearance="?android:textAppearanceMedium" android:ellipsize="end" android:gravity="start" android:id="@id/header" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ТЕСТ СКОРОСТИ" android:maxLines="1" android:layout_weight="2.0" android:fontFamily="sans-serif-condensed" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <LinearLayout android:layout_gravity="center_vertical" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <TextView android:layout_gravity="center_horizontal" android:orientation="horizontal" android:id="@id/headerTest" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="40.0dip" android:text="..." android:fontFamily="sans-serif-condensed" />
+        <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="40.0dip" android:weightSum="2.0">
+            <LinearLayout android:orientation="vertical" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <ImageView android:layout_gravity="center_horizontal" android:id="@id/imageViewDE" android:layout_width="64.0dip" android:layout_height="64.0dip" android:layout_marginTop="20.0dip" app:srcCompat="@drawable/nl" />
+                <TextView android:layout_gravity="center_horizontal" android:id="@id/textHeaderDE" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ГЕРМАНИЯ" android:fontFamily="sans-serif-condensed" />
+                <TextView android:layout_gravity="center_horizontal" android:id="@id/textDE" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="20.0dip" android:text="..." android:fontFamily="sans-serif-condensed" />
+                <ProgressBar android:layout_gravity="center_horizontal" android:id="@id/progressDE" android:visibility="invisible" android:layout_width="200.0dip" android:layout_height="7.0dip" android:layout_marginBottom="20.0dip" style="?android:progressBarStyleHorizontal" />
+            </LinearLayout>
+            <LinearLayout android:orientation="vertical" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+                <ImageView android:layout_gravity="center_horizontal" android:id="@id/imageViewRU" android:layout_width="64.0dip" android:layout_height="64.0dip" android:layout_marginTop="20.0dip" app:srcCompat="@drawable/ru" />
+                <TextView android:layout_gravity="center_horizontal" android:id="@id/textHeaderRU" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="РОССИЯ" android:fontFamily="sans-serif-condensed" />
+                <TextView android:layout_gravity="center_horizontal" android:id="@id/textRU" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="20.0dip" android:text="..." android:fontFamily="sans-serif-condensed" />
+                <ProgressBar android:layout_gravity="center_horizontal" android:id="@id/progressRU" android:visibility="invisible" android:layout_width="200.0dip" android:layout_height="7.0dip" android:layout_marginBottom="20.0dip" style="?android:progressBarStyleHorizontal" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_gravity="center_horizontal" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <Button android:layout_gravity="center" android:id="@id/buttonStart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="5.0dip" android:text="Старт" android:fontFamily="sans-serif-condensed" />
+            <Button android:gravity="center" android:layout_gravity="center" android:id="@id/buttonStop" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="5.0dip" android:text="Стоп" android:fontFamily="sans-serif-condensed" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
