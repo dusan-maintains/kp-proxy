@@ -183,9 +183,10 @@ def proxy(path):
         real_path = real_path[5:]  # api2/ → v1.1/...
     target_url = f"{REAL_API}/{real_path}"
     auth_header = request.headers.get("Authorization", "")
+    app.logger.info(f">>> {request.method} /{path} from {request.remote_addr}")
 
-    # Включаем 4K на устройстве при первом обращении
-    if auth_header and "Bearer" in auth_header:
+    # Включаем 4K только при запросе /user (один раз за сессию)
+    if "/user" in path and auth_header and "Bearer" in auth_header:
         ensure_device_4k(auth_header)
 
     # Собираем заголовки
@@ -219,22 +220,27 @@ def proxy(path):
     if "application/json" in content_type:
         try:
             data = resp.json()
+            modified = False
 
             # /user — подменяем подписку
-            if "/user" in path and "subscription" in str(data)[:200]:
-                data = fake_subscription(data)
+            if "/user" in path and isinstance(data, dict):
+                if "user" in data or "subscription" in data:
+                    data = fake_subscription(data)
+                    modified = True
 
-            # Любой ответ с video/files — подменяем URLs
-            data_str = json.dumps(data)
-            if "demo/demo.mp4" in data_str or "\"files\"" in data_str:
+            # items/ — подменяем URLs в файлах
+            if "items" in path or "watching" in path:
                 data, mod = process_files_in_response(data, auth_header)
                 if mod:
-                    app.logger.info(f"Forged URLs in response for {path}")
+                    modified = True
+                    app.logger.info(f"Forged URLs in /{path}")
 
             body = json.dumps(data, ensure_ascii=False)
+            app.logger.info(f"<<< /{path}: {resp.status_code} {'[MODIFIED]' if modified else ''}")
             return Response(body, status=resp.status_code,
                           content_type="application/json; charset=utf-8")
-        except:
+        except Exception as e:
+            app.logger.error(f"JSON processing error for /{path}: {e}")
             pass
 
     # Всё остальное — пропускаем как есть
