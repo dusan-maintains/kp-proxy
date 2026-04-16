@@ -229,6 +229,10 @@ def proxy(path):
         else:
             return Response("OK", status=200)
     except Exception as e:
+        elapsed = f"{time.time()-t_start:.1f}s"
+        result = f"{log_entry} → 502 ERROR:{e} {elapsed}"
+        REQUEST_LOG.append(result)
+        if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
         return Response(json.dumps({"error": str(e)}), status=502,
                        content_type="application/json")
 
@@ -251,7 +255,6 @@ def proxy(path):
                 data, mod = process_files_in_response(data, auth_header)
                 if mod:
                     modified = True
-                    app.logger.info(f"Forged URLs in /{path}")
 
             body = json.dumps(data, ensure_ascii=False)
             elapsed = f"{time.time()-t_start:.1f}s"
@@ -262,10 +265,17 @@ def proxy(path):
             return Response(body, status=resp.status_code,
                           content_type="application/json; charset=utf-8")
         except Exception as e:
-            app.logger.error(f"JSON processing error for /{path}: {e}")
+            elapsed = f"{time.time()-t_start:.1f}s"
+            result = f"{log_entry} → {resp.status_code} JSON_ERR:{e} {elapsed}"
+            REQUEST_LOG.append(result)
+            if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
             pass
 
     # Всё остальное — пропускаем как есть
+    elapsed = f"{time.time()-t_start:.1f}s"
+    result = f"{log_entry} → {resp.status_code} [passthrough] {elapsed}"
+    REQUEST_LOG.append(result)
+    if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
     return Response(resp.content, status=resp.status_code,
                    content_type=content_type)
 
