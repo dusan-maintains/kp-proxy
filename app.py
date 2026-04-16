@@ -7,7 +7,7 @@ KinoPub 4K Proxy — прозрачный прокси с подменой CDN-�
 
 from flask import Flask, request, Response
 import requests as rq
-import json, base64, re, time, os, threading
+import json, base64, re, time, os
 import logging
 
 app = Flask(__name__)
@@ -15,35 +15,32 @@ logging.basicConfig(level=logging.INFO)
 
 REAL_API = "https://api.service-kp.com"
 DEVICE_SETTINGS_CACHE = {}  # device_id → True if 4k enabled
-REQUEST_LOG = []  # in-memory log
+LOG_FILE = "/tmp/kp4k_requests.log"
 
 
-def keep_alive():
-    """Пингуем себя каждые 10 минут чтобы Render не засыпал"""
-    url = os.environ.get("RENDER_EXTERNAL_URL", "https://kp4k.onrender.com")
-    while True:
-        time.sleep(600)  # 10 минут
-        try:
-            rq.get(f"{url}/", timeout=10)
-            app.logger.info("keep-alive ping OK")
-        except:
-            pass
-
-# Запускаем keep-alive в фоне
-ping_thread = threading.Thread(target=keep_alive, daemon=True)
-ping_thread.start()
+def log_request(msg):
+    """Write to shared log file"""
+    try:
+        with open(LOG_FILE, "a") as f:
+            f.write(msg + "\n")
+    except:
+        pass
 
 
 @app.route("/kp4k/logs")
 def show_logs():
-    """Debug: показать последние запросы"""
-    lines = "\n".join(REQUEST_LOG[-100:])
-    return f"<pre>{lines}</pre>", 200
+    try:
+        with open(LOG_FILE, "r") as f:
+            lines = f.readlines()[-100:]
+        return f"<pre>{''.join(lines)}</pre>", 200
+    except:
+        return "<pre>no logs yet</pre>", 200
 
 
 @app.route("/kp4k/clear")
 def clear_logs():
-    REQUEST_LOG.clear()
+    try: os.remove(LOG_FILE)
+    except: pass
     return "cleared", 200
 
 def forge_token_in_url(url):
@@ -217,8 +214,7 @@ def proxy(path):
     auth_header = request.headers.get("Authorization", "")
     t_start = time.time()
     log_entry = f"{time.strftime('%H:%M:%S')} {request.method} /{path}"
-    REQUEST_LOG.append(f"{log_entry} → [STARTED]")
-    if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
+    log_request(f"{log_entry} -> [STARTED]")
 
     # Включаем 4K только при запросе /user (один раз за сессию)
     if "/user" in path and auth_header and "Bearer" in auth_header:
@@ -247,9 +243,8 @@ def proxy(path):
             return Response("OK", status=200)
     except Exception as e:
         elapsed = f"{time.time()-t_start:.1f}s"
-        result = f"{log_entry} → 502 ERROR:{e} {elapsed}"
-        REQUEST_LOG.append(result)
-        if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
+        result = f"{log_entry} -> 502 ERROR:{e} {elapsed}"
+        log_request(result)
         return Response(json.dumps({"error": str(e)}), status=502,
                        content_type="application/json")
 
@@ -275,24 +270,20 @@ def proxy(path):
 
             body = json.dumps(data, ensure_ascii=False)
             elapsed = f"{time.time()-t_start:.1f}s"
-            result = f"{log_entry} → {resp.status_code} {'[FORGED]' if modified else ''} {elapsed}"
-            REQUEST_LOG.append(result)
-            if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
-            app.logger.info(f"<<< {result}")
+            result = f"{log_entry} -> {resp.status_code} {'[FORGED]' if modified else ''} {elapsed}"
+            log_request(result)
             return Response(body, status=resp.status_code,
                           content_type="application/json; charset=utf-8")
         except Exception as e:
             elapsed = f"{time.time()-t_start:.1f}s"
-            result = f"{log_entry} → {resp.status_code} JSON_ERR:{e} {elapsed}"
-            REQUEST_LOG.append(result)
-            if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
+            result = f"{log_entry} -> {resp.status_code} JSON_ERR:{e} {elapsed}"
+            log_request(result)
             pass
 
     # Всё остальное — пропускаем как есть
     elapsed = f"{time.time()-t_start:.1f}s"
-    result = f"{log_entry} → {resp.status_code} [passthrough] {elapsed}"
-    REQUEST_LOG.append(result)
-    if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
+    result = f"{log_entry} -> {resp.status_code} [passthrough] {elapsed}"
+    log_request(result)
     return Response(resp.content, status=resp.status_code,
                    content_type=content_type)
 
