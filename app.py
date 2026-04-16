@@ -16,18 +16,16 @@ DEVICE_SETTINGS_CACHE = {}  # device_id → True if 4k enabled
 
 def forge_token_in_url(url):
     """Подменяет -1 → 1 в base64 CDN-токене внутри URL"""
-    if not url or "demo" not in url:
+    if not url:
         return url, False
 
-    # Паттерн: /pd/BASE64TOKEN/demo/demo.mp4
-    match = re.search(r'/pd/([A-Za-z0-9+/_-]{50,})/demo/demo\.mp4', url)
-    if not match:
-        # Попробуем hls
-        match = re.search(r'/hls\d?/([A-Za-z0-9+/_-]{50,})/demo/demo\.mp4', url)
+    # Паттерн: /(pd|hls|hls2|hls4)/BASE64TOKEN/ — ловим токен между двумя /
+    # [^/] — НЕ включаем / в character class, иначе regex жрёт весь путь
+    match = re.search(r'/(pd|hls\d?)/([A-Za-z0-9+=_-]{40,})/', url)
     if not match:
         return url, False
 
-    token_b64 = match.group(1)
+    token_b64 = match.group(2)
     try:
         padded = token_b64 + "=" * (4 - len(token_b64) % 4) if len(token_b64) % 4 else token_b64
         decoded = base64.b64decode(padded).decode("utf-8")
@@ -45,9 +43,14 @@ def forge_token_in_url(url):
             new_decoded = decoded.replace(f"id={id_val}", f"id={new_id}")
             new_b64 = base64.b64encode(new_decoded.encode()).decode().rstrip("=")
             new_url = url.replace(token_b64, new_b64)
+            # Также убираем demo/demo.mp4 если есть
+            new_url = new_url.replace("/demo/demo.mp4", "")
+            new_url = new_url.replace("/demo/master-v1a1.m3u8", "")
+            new_url = new_url.replace("/demo.m3u8", "")
+            app.logger.info(f"Forged token: ;-1; → ;1; in {match.group(1)} URL")
             return new_url, True
-    except:
-        pass
+    except Exception as e:
+        app.logger.error(f"Forge error: {e}")
 
     return url, False
 
@@ -81,58 +84,45 @@ def process_files_in_response(data, auth_header):
                 vids.extend(find_videos(item))
         return vids
 
+    # Собираем ВСЕ files[] — и внутри videos[], и на верхнем уровне (media-links)
+    all_file_blocks = []
+
+    # 1. Top-level files[] (media-links response)
+    if "files" in data and isinstance(data["files"], list):
+        all_file_blocks.extend(data["files"])
+        app.logger.info(f"Found {len(data['files'])} top-level files (media-links)")
+
+    # 2. Nested videos[].files[]
     videos = find_videos(data)
     app.logger.info(f"Found {len(videos)} video blocks")
-
     for video in videos:
         if not isinstance(video, dict):
             continue
-        mid = video.get("id")
         files = video.get("files", [])
+        all_file_blocks.extend(files)
 
-        # Получаем реальные пути через media-links
-        real_paths = {}
-        if mid and auth_header:
-            try:
-                ml_resp = rq.get(f"{REAL_API}/v1/items/media-links",
-                                headers={"Authorization": auth_header},
-                                params={"mid": mid}, timeout=10)
-                if ml_resp.status_code == 200:
-                    for mf in ml_resp.json().get("files", []):
-                        q = mf.get("quality", "")
-                        c = mf.get("codec", "")
-                        key = f"{q}_{c}" if c else q
-                        real_paths[key] = mf.get("file", "")
-                        if q not in real_paths:
-                            real_paths[q] = mf.get("file", "")
-                    app.logger.info(f"media-links mid={mid}: {list(real_paths.keys())}")
-            except Exception as e:
-                app.logger.error(f"media-links error: {e}")
+    # Подменяем URL в каждом файле
+    for f in all_file_blocks:
+        if not isinstance(f, dict):
+            continue
+        quality = f.get("quality", "")
+        codec = f.get("codec", "")
+        real_path = f.get("file", "")  # /9/33/Fl1YClg0tFFr7aYrR.mp4
 
-        # Подменяем URL в каждом файле
-        for f in files:
-            if not isinstance(f, dict):
+        url_obj = f.get("url", {})
+        if not isinstance(url_obj, dict):
+            continue
+        for url_type in ["http", "hls", "hls2", "hls4"]:
+            url = url_obj.get(url_type, "")
+            if not url:
                 continue
-            quality = f.get("quality", "")
-            codec = f.get("codec", "")
-
-            real_path = real_paths.get(f"{quality}_{codec}",
-                        real_paths.get(quality, ""))
-
-            url_obj = f.get("url", {})
-            if not isinstance(url_obj, dict):
-                continue
-            for url_type in ["http", "hls", "hls2", "hls4"]:
-                url = url_obj.get(url_type, "")
-                if not url:
-                    continue
-                forged, ok = forge_token_in_url(url)
-                if ok:
-                    if real_path:
-                        forged = replace_demo_with_real(forged, real_path)
-                    url_obj[url_type] = forged
-                    modified = True
-                    app.logger.info(f"Forged [{quality}] [{codec}] real_path={bool(real_path)}")
+            forged, ok = forge_token_in_url(url)
+            if ok:
+                if real_path:
+                    forged = replace_demo_with_real(forged, real_path)
+                url_obj[url_type] = forged
+                modified = True
+                app.logger.info(f"Forged [{quality}] [{codec}] {url_type} real_path={bool(real_path)}")
 
     return data, modified
 
