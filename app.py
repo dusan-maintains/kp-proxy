@@ -7,15 +7,31 @@ KinoPub 4K Proxy — прозрачный прокси с подменой CDN-�
 
 from flask import Flask, request, Response
 import requests as rq
-import json, base64, re, time, os
+import json, base64, re, time, os, threading
+import logging
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.INFO)
 
 REAL_API = "https://api.service-kp.com"
 DEVICE_SETTINGS_CACHE = {}  # device_id → True if 4k enabled
 REQUEST_LOG = []  # in-memory log
-import logging
-logging.basicConfig(level=logging.INFO)
+
+
+def keep_alive():
+    """Пингуем себя каждые 10 минут чтобы Render не засыпал"""
+    url = os.environ.get("RENDER_EXTERNAL_URL", "https://kp4k.onrender.com")
+    while True:
+        time.sleep(600)  # 10 минут
+        try:
+            rq.get(f"{url}/", timeout=10)
+            app.logger.info("keep-alive ping OK")
+        except:
+            pass
+
+# Запускаем keep-alive в фоне
+ping_thread = threading.Thread(target=keep_alive, daemon=True)
+ping_thread.start()
 
 
 @app.route("/kp4k/logs")
