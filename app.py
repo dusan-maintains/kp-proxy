@@ -201,7 +201,8 @@ def proxy(path):
     auth_header = request.headers.get("Authorization", "")
     t_start = time.time()
     log_entry = f"{time.strftime('%H:%M:%S')} {request.method} /{path}"
-    app.logger.info(f">>> {log_entry}")
+    REQUEST_LOG.append(f"{log_entry} → [STARTED]")
+    if len(REQUEST_LOG) > 200: REQUEST_LOG.pop(0)
 
     # Включаем 4K только при запросе /user (один раз за сессию)
     if "/user" in path and auth_header and "Bearer" in auth_header:
